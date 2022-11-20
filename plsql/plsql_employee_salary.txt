@@ -1,0 +1,55 @@
+1. The organization has decided to increase the salary of employees by 10% of 
+existing salary, whose existing salary is less than Rs. 10000/- 
+Write a PL/SQ block to update the salary as per above requirement, display an 
+appropriate message based on the no. of rows affected by this update (using 
+implicit cursor status variables).
+
+
+-------table creation----------
+
+SQL> create table employee(emp_no int primary key,emp_name varchar(40),salary int);
+
+-------insertion-------------------
+
+SQL> insert into employee values(101,'AAA',25000);
+
+1 row created.
+
+SQL> insert into employee values(102,'BBB',12000);
+
+1 row created.
+
+SQL> insert into employee values(103,'CCC',7000);
+
+1 row created.
+
+SQL> insert into employee values(104,'DDD',5000);
+
+1 row created.
+
+SQL> insert into employee values(105,'EEE',22000);
+
+1 row created.
+
+SQL> insert into employee values(106,'FFF',9000);
+
+1 row created.
+
+-----------------
+SQL> select * from employee;
+------------------
+
+ed
+
+---------------code-------------
+
+   begin
+   update employee
+   set salary=salary+(salary*0.1)
+   where salary<10000;
+   DBMS_OUTPUT.put_line('Number of records updated='||sql%rowcount);
+   END;
+
+-------------------------------
+
+select * from employee;
