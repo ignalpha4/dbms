@@ -1,0 +1,82 @@
+-----------creation of tables-------------------
+
+SQL> create table o_roll(roll int,name char(50));
+
+Table created.
+
+SQL> create table n_roll(roll int,name char(50));
+
+Table created.
+
+----------------------------------------------
+
+-------------INSERTION----------------
+
+SQL> insert into o_roll values(1,'shubham');
+
+1 row created.
+
+SQL> insert into o_roll values(2,'rushi');
+
+1 row created.
+
+SQL> insert into o_roll values(3,'pratik');
+
+1 row created.
+
+----------------n_roll------------------
+
+SQL> insert into n_roll values(4,'vishal');
+
+1 row created.
+
+SQL> insert into n_roll values(5,'aditya');
+
+1 row created.
+
+SQL> insert into n_roll values(6,'suraj');
+
+1 row created.
+
+SQL> ed
+
+
+/////---------code------------//
+
+declare
+
+cursor cu1 
+is
+select roll,Name from o_roll;
+
+cursor cu2
+is
+select Roll from n_roll;
+
+rno int;
+
+nm varchar(50);
+
+rno2 int;
+
+begin
+open cu1;
+open cu2;
+loop fetch cu1 into rno,nm;
+fetch cu2 into rno2;
+exit when cu1%found=false;
+if rno2<>rno then
+insert into n_roll values(rno,nm);
+end if;
+
+end loop;
+
+close cu1;
+close cu2;
+
+end;
+
+
+sql>/
+sql>select * from n_roll;
+----------------------------------

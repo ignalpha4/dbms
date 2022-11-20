@@ -1,0 +1,70 @@
+-----Table creation----------
+
+SQL> create table library(stud_id int,stud_name varchar(60), book_no int , book_name varchar(50));
+
+Table created.
+
+SQL> create table library_audit1(stud_id int,stud_name varchar(60), book_no int);
+
+Table created.
+
+
+---------INSERTION-------------
+
+SQL> insert into library values(1,'shubham',10,'abc');
+
+1 row created.
+
+SQL> insert into library values(2,'rushi',20,'def');
+
+1 row created.
+
+SQL> insert into library values(3,'vishal',30,'ghi');
+
+1 row created.
+
+SQL> insert into library values(4,'pratik',40,'jkl');
+
+1 row created.
+
+SQL> insert into library values(5,'aditya',50,'mno');
+
+1 row created.
+
+
+sql>ed
+
+
+-------------code---------------
+
+create or replace trigger lib_trig
+after
+update or delete on library
+for each row
+enable
+
+begin
+insert into library_audit1
+(stud_id,stud_name,book_no)
+values(:old.stud_id,:old.stud_name,:old.book_no);
+end;
+
+----------------------------------
+
+
+SQL>/
+
+
+SQL> delete from library where stud_id=2;
+
+SQL> select * from library;
+
+SQL> select * from library_audit1;
+
+
+SQL> update library set book_name='dbms' where stud_id=1;
+
+1 row updated.
+
+SQL> select * from library;
+

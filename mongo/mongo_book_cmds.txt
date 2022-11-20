@@ -1,0 +1,166 @@
+use shubham;
+
+db.createCollection('book');
+
+
+//-------a. Add 5 documents in the collection with keys----//
+
+
+db.book.insertMany([{
+    'book_isbn':1234,
+    'title':'dbms',
+    'publisher_name':'tata',
+    'author':
+    {
+        'name':'pearson',
+        'address':'mg road',
+        'phone':[{'landline':0123456789},{'mobile':924567894}]
+    },
+    
+    'publisher_city':'pune',
+    'price':100,
+    'copies':20
+    },
+
+    {
+    'book_isbn':1334,
+    'title':'cns',
+    'publisher_name':'bajaj',
+    'author':
+    {
+        'name':'maxwell',
+        'address':'mg road',
+        'phone':[{'landline':0123456789},{'mobile':924567894}]
+    },
+    
+    'publisher_city':'mumbai',
+    'price':800,
+    'copies':16
+
+    },
+
+    
+    {
+        'book_isbn':1334,
+        'title':'iot',
+        'publisher_name':'nirali',
+        'author':
+        {
+            'name':'arti',
+            'address':'pune',
+            'phone':[{'landline':0123456789},{'mobile':924567894}]
+        },
+        
+        'publisher_city':'thane',
+        'price':400,
+        'copies':120
+
+    },
+
+    
+    {
+    'book_isbn':1624,
+    'title':'spos',
+    'publisher_name':'techneo',
+    'author':
+    {
+        'name':'rohit',
+        'address':'bombay',
+        'phone':[{'landline':0123456789},{'mobile':924567894}]
+    },
+    
+    'publisher_city':'kolhapur',
+    'price':400,
+    'copies':28
+
+    },
+    {
+    'book_isbn':1111,
+    'title':'toc',
+    'publisher_name':'nirali',
+    'author':
+    {
+        'name':'xyz',
+        'address':'bombay',
+        'phone':[{'landline':0123456789},{'mobile':924567894}]
+    },
+    
+    'publisher_city':'nagpur',
+    'price':300,
+    'copies':200
+
+    },
+]);
+
+//---b. Give details of Books whose Publisher lives in “Pune”.----//
+
+    db.book.find({publisher_city:'pune'});
+
+//----c. Delete name Book from Book whose name start with “D"-------//
+
+    db.book.remove({title : /^d/});
+
+    db.book.find({ title :/^d/});
+
+//-----------d. Change the city of publisher “Pearson” to “Pune”. ----//
+
+    db.book.find({publisher_name:'bajaj'});
+
+    db.book.update( {publisher_name:'bajaj'}, {$set:{publisher_city:'pune'}});
+
+
+//----------e. Find the details of publisher named “Pearson”-------//
+
+    db.book.find({publisher_name:'bajaj'});
+
+//------------------------------------------------------------------------------------------------------------//
+
+
+//----------------------a. Count the number of documents in the collection----------------------//
+
+    db.book.count();
+
+//----------------------b. Arrange the documents in descending order of book_isbn.-----------//
+
+    db.book.find().sort({book_isbn:-1});
+
+//----------------------c. Select Book Names whose title is ”DBMS” ----------------------//
+
+    db.book.find({title:'dbms'} ,{_id:0,title:1});
+
+//--------------------d. Update Book Copies as “10” whose Book Publisher is “Tata MacGraw Hill”.------//
+
+    db.book.update({publisher_name:'bajaj'},{$set:{copies:10}} ,{multi:true});
+
+    db.book.find({publisher_name:'bajaj'});
+
+//-------------------e. Display name of publishers as per no of books published by them in ascending order---//
+
+    db.book.aggregate([
+
+        {
+            $group:{_id:"$publisher_name",total:{$sum:"$copies"}}
+        },
+
+        {
+            $sort:{total:1}
+        }
+
+    ]);
+
+
+
+//---------------f. Get publisher names who published at least one book written by author name like ‘K%’.-------//
+
+    db.book.find({"author.name":/^k/} , {publisher_name:1, _id:0});
+
+
+//---------------g. Delete the book from Book table written by Author ‘maxwell’---------------//
+
+    db.book.find({"author.name":"maxwell"});
+
+    db.book.remove({"author.name":"maxwell"});
+
+    db.book.find({"author.name":"maxwell"});
+
+    

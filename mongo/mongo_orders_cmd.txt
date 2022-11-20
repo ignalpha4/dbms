@@ -1,0 +1,134 @@
+use shubham;
+
+//----------creating a collection-------//
+
+    db.createCollection('orders');
+
+//-------inserting values in collection-----//
+
+
+    db.orders.insert([
+        {
+            cust_id:'abc123',
+            ord_date:new Date('Feb 11,2022'),
+            status:'A',
+            price:50,
+            items:[
+                {sku:'xxx' ,qty:25,price:1},
+                {sku:'yyy',qty:25,price:1}
+            ] 
+        },
+        
+        {
+            cust_id:'def123',
+            ord_date:new Date('Feb 10,2022'),
+            status:'A',
+            price:50,
+            items:[
+                {sku:'xxx' ,qty:25,price:1},
+                {sku:'yyy',qty:25,price:1}
+            ] 
+        },
+        
+        {
+            cust_id:'ghi123',
+            ord_date:new Date('Feb 10,2022'),
+            status:'B',
+            price:60,
+            items:[
+                {sku:'xxx' ,qty:25,price:4},
+                {sku:'yyy',qty:25,price:9}
+            ] 
+        },
+
+        {
+            cust_id:'jkl123',
+            ord_date:new Date('sep 22,2021'),
+            status:'B',
+            price:90,
+            items:[
+                {sku:'xxx' ,qty:25,price:5},
+                {sku:'yyy',qty:25,price:4}
+            ] 
+        },
+
+        {
+            cust_id:'mno123',
+            ord_date:new Date('jan 30,2021'),
+            status:'A',
+            price:90,
+            items:[
+                {sku:'xxx' ,qty:35,price:8},
+                {sku:'yyy',qty:25,price:2}
+            ] 
+        }
+
+    ]);
+
+
+
+//-----a. Count all records from orders---//
+
+    db.orders.aggregate([{ $group : {_id:null,count:{$sum:1}}}]);
+
+    //--short one: db.orders.count();----//
+
+
+//-----b. Sum the price field from orders----//
+
+    db.orders.aggregate([{$group:{_id:null,total:{$sum:'$price'}} }]);
+
+
+//-----c. For each unique cust_id, sum the price field.----//
+
+    db.orders.aggregate([{$group:{_id:'$cust_id',total:{$sum:'$price'}} }]);
+
+//-----d. For each unique cust_id, sum the price field, results sorted by sum---//
+
+    db.orders.aggregate([
+        {$group:{_id:'$cust_id',total:{$sum:'$price'}}},
+        {$sort:{total:1}}
+    ]);
+
+
+//----e. For each unique cust_id, ord_date grouping, sum the price field.--//
+
+    db.orders.aggregate([
+        {
+            $group:{_id:{cust_id:'$cust_id'  ,ord_date:'$ord_date'},
+            total:{$sum:'$price'}
+            }
+        }
+        
+    ]);
+
+
+
+//--------------NO given---------------------------------//
+
+//-----------f . For cust_id with multiple records, return the cust_id and the corresponding record count.-----//
+
+    db.orders.aggregate( [
+        { 
+            $group: { _id:"$cust_id",count: { $sum: 1 } } },
+            { $match: { count: {$gt: 1 } } 
+        }
+        ]);
+
+
+//-------g)For each unique cust_id, ord_date grouping, sum the price field and return only where the sum is greater than 250.-----//
+
+    db.orders.aggregate( [
+        { 
+            $group: { _id: { cust_id:'$cust_id',ord_date:'$ord_date' },
+            total: {$sum: '$price' } } },
+            { 
+                $match: { total: { $gt: 250 } 
+            }
+        }
+
+        ]);
+
+//-------h)h)For each unique cust_id with status A, sum the price field.----//
+
+    db.orders.aggregate( [{ $match: { status:'A' } },{ $group: { _id: '$cust_id',total: { $sum:'$price' } } }]);

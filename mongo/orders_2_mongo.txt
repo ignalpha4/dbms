@@ -1,0 +1,120 @@
+
+use shubham;
+
+db.createCollection('orders2');
+
+
+//--insertion--//
+
+db.orders2.insert([
+    {
+       cust_id:'abc123',
+       ord_date:new Date('oct 04,2012'),
+       status:'A',
+       price:25,
+       gender:'F',
+       rating:1 
+    },
+
+     {
+       cust_id:'xyz123',
+       ord_date:new Date('oct 21,2012'),
+       status:'B',
+       price:55,
+       gender:'F',
+       rating:2
+    },
+
+     {
+       cust_id:'xyz999',
+       ord_date:new Date('oct 21,2012'),
+       status:'A',
+       price:55,
+       gender:'F',
+       rating:2
+    },
+
+    {
+       cust_id:'abc999',
+       ord_date:new Date('oct 03,2012'),
+       status:'A',
+       price:25,
+       gender:'M',
+       rating:2
+    },
+
+    {
+       cust_id:'abc999',
+       ord_date:new Date('oct 03,2012'),
+       status:'A',
+       price:25,
+       gender:'M',
+       rating:2
+    },
+
+
+
+    
+]);
+
+
+//------A)Write a Map Reduce operation to Return the Total Price Per Customer Id-----//
+
+        var map=function() {
+            emit(this.cust_id,this.price)};
+
+        var reduce=function(key,values) {
+            return Array.sum(values)};
+
+        db.orders2.mapReduce(map,reduce,{out:'result'});
+
+
+//------b.Count the number of female (F) and male (M) respondents in the orders collection---//
+
+        var map=function() { var gen; if(this.gender=='M') gen='male';else gen='female'; emit(gen,this.cust_id)};
+
+
+        var reduce=function(key,values) {
+            var sum=0;
+            values.forEach(function(doc) {
+            sum=sum+1;
+            });
+
+                 return {total:sum};
+            };
+
+
+        var count=db.orders.mapReduce(map,reduce,{out:'result'});
+
+
+        db.result.find();
+
+
+//--------c.Count the number of each type of rating (1, 2, 3, 4 or 5) for each orders----//
+
+
+        var map=function() { var cat; if(this.rating==1) cat=1; if(this.rating==2)
+        cat=2; if(this.rating==3) cat=3; if(this.rating==4) cat=4; if(this.rating==5)
+        cat=5; emit(this.cust_id,cat); };
+
+
+        var reduce = function(key,values) { var sum=0; values.forEach(function(doc){
+        sum=sum+1; }); return {total: sum}; };
+
+        db.orders2.mapReduce(map,reduce,{out:'result'});
+
+        db.result.find();
+
+
+//----------d.Calculate the average rating for each order---//
+
+
+       var map=function() {
+            emit(this.cust_id , this.rating)} ;
+
+        var reduce=function(key,values) {
+            return Array.avg(values)};
+
+        db.orders2.mapReduce(map,reduce,{out:'result'});
+
+        db.result.find();

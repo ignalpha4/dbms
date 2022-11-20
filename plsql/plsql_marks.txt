@@ -1,0 +1,29 @@
+---------code----------------
+declare
+mark stud_marks1.total_marks%type;
+rollno stud_marks1.roll%type;
+class1 result2.class%type;
+name1 result2.name%type;
+procedure proc_grade(mark in int,class1 out char)
+is
+begin
+if mark<=1500 and mark>=990 then class1:='distinction';
+	if mark between 989 and 900 then class1:='first class';
+		if mark between 899 and 825 then class1:='second class';
+			if mark<825 then class1:='pass';
+			end if;
+		end if;
+	end if;
+end if;
+end;
+begin
+rollno:=&rollno;
+select total_marks into mark from stud_marks1 where roll=rollno;
+select name into name1 from stud_marks1 where roll=rollno;
+select roll into rollno from stud_marks1 where roll=rollno;
+proc_grade(mark,class1);
+dbms_output.put_line(class1);
+insert into result2 values(rollno,name1,class1);
+end;
+
+--------------------------------------------

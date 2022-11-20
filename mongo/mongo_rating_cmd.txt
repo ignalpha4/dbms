@@ -1,0 +1,99 @@
+use shubham;
+
+//----------creating a collection-------//
+
+    db.createCollection('rating');
+
+//-------inserting values in collection-----//
+
+    db.rating.insert([
+        {
+            movie_id:'123',
+            user_id:12,
+            title:'Toy story(1995)',
+            status:'A',
+            reting:5
+
+        },
+        {
+            movie_id:'456',
+            user_id:11,
+            title:'Ice Age(2005)',
+            status:'A',
+            rating:4
+        },
+
+        {
+            movie_id:'789',
+            user_id:10,
+            title:'Avengers(2012)',
+            status:'A',
+            rating:5
+        },
+
+        {
+            movie_id:'101',
+            user_id:9,
+            title:'Shawshannk redemption(1994)',
+            status:'A',
+            rating:5
+        },
+
+        {
+            movie_id:'102',
+            user_id:8,
+            title:'3 idiots',
+            status:'B',
+            rating:3
+        },
+
+    ]);
+
+
+//--------a) Creating an index on movie_id and sorts the keys in the index in ascending  order. Verify the query plan----------//
+
+    db.rating.createIndex({movie_id:1})
+
+//-------b) Show various indexes created on movie collection.-------//
+        db.rating.getIndexes();
+
+//--------c)Sort movie_id in descending order.-------//
+
+        db.rating.find().sort({movie_id:-1});
+
+//---------d)Create a descending order index on movie_id to get ratings related to “Toy Story (1995)” verify the query plan.----//
+
+        db.rating.find({title:'Toy story(1995)'},{rating:1}).sort({movie_id:-1});
+
+        db.rating.find().explain();
+
+
+
+//---------e)Limit the number of items in the result of above query.-----//
+
+        db.rating.find({title:'Toy story(1995)'},{rating:1}).sort({movie_id:-1}).limit(2);
+
+
+//--------f)Get ratings for the movie “ICE AGE(2005)” using the descending ordered index on movie_id and explain.-------//
+
+        db.rating.find({title:'Ice Age(2005)'},{rating:1}).sort({movie_id:-1})
+        
+        
+//--------g)Rebuild all indexes for the ratings collection---------//
+
+
+        db.rating.reIndex();
+
+//---------h)Drop index on rating collection.----------//
+
+        db.rating.dropIndexes();
+
+//---------i) Create an index on movie_id and ratings fields together with movie_id (ascending order sorted) and rating (descending order sorted).---//
+
+        db.rating.ensureIndex({movie_id:1,rating:-1});
+
+//--------j)A compound index for movie_id, rating, and user_id.---//
+
+        db.rating.ensureIndex({movie_id:1,rating:1,user_id:1});
+
+
